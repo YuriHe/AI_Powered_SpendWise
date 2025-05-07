@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -55,7 +54,7 @@ export default function Expenses() {
     isLoading: expensesLoading, 
     isError: expensesError 
   } = useQuery({
-    queryKey: ['expenses', filterOptions],
+    queryKey: ['expenses', { timeFilter: filterOptions.timeFilter }],
     queryFn: async () => {
       let url = `${API_URL}/expenses?timeFilter=${filterOptions.timeFilter}`;
       
@@ -109,7 +108,11 @@ export default function Expenses() {
         pagination: data.pagination
       };
     },
-    enabled: !!localStorage.getItem('auth_token')
+    enabled: !!localStorage.getItem('auth_token'),
+    staleTime: 0, // Always consider data stale
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 
   // Create expense mutation
@@ -132,7 +135,9 @@ export default function Expenses() {
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate both expense queries to ensure data consistency
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ['expenseSummary'] });
       toast.success("Expense added successfully");
       setIsExpenseFormOpen(false);
     },
@@ -161,7 +166,9 @@ export default function Expenses() {
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate both expense queries to ensure data consistency
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ['expenseSummary'] });
       toast.success("Expense updated successfully");
       setIsExpenseFormOpen(false);
       setIsEditMode(false);
@@ -188,7 +195,9 @@ export default function Expenses() {
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate both expense queries to ensure data consistency
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ['expenseSummary'] });
       toast.success("Expense deleted successfully");
       setIsExpenseDialogOpen(false);
       setSelectedExpense(null);

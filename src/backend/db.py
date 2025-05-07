@@ -14,7 +14,7 @@ def get_db_connection():
             host = os.environ.get('DB_HOST', 'localhost')
             database = os.environ.get('DB_NAME', 'expense_tracker')
             user = os.environ.get('DB_USER', 'postgres')
-            password = os.environ.get('DB_PASSWORD', 'postgres')
+            password = os.environ.get('DB_PASSWORD', 'admin123')
             port = os.environ.get('DB_PORT', '5432')
             
             g.db = psycopg2.connect(
@@ -31,7 +31,7 @@ def get_db_connection():
         host = os.environ.get('DB_HOST', 'localhost')
         database = os.environ.get('DB_NAME', 'expense_tracker')
         user = os.environ.get('DB_USER', 'postgres')
-        password = os.environ.get('DB_PASSWORD', 'postgres')
+        password = os.environ.get('DB_PASSWORD', 'admin123')
         port = os.environ.get('DB_PORT', '5432')
         
         return psycopg2.connect(

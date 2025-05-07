@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { TimeFilter } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentMonthName, getLastMonthName, getCurrentYear } from "@/lib/date-utils";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
 
 // Function to get authorization header
 const getAuthHeader = () => {
@@ -46,7 +45,7 @@ export default function Dashboard() {
     isLoading: summaryLoading,
     isError: summaryError
   } = useQuery({
-    queryKey: ['expenseSummary', timeFilter],
+    queryKey: ['expenseSummary', { timeFilter }],
     queryFn: async () => {
       const response = await fetch(`${API_URL}/expenses/summary?timeFilter=${timeFilter}`, {
         headers: getAuthHeader()
@@ -83,7 +82,11 @@ export default function Dashboard() {
         recentExpenses: formattedRecentExpenses
       };
     },
-    enabled: !!localStorage.getItem('auth_token')
+    enabled: !!localStorage.getItem('auth_token'),
+    staleTime: 0, // Always consider data stale
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 
   // Fetch all expenses for specific time period
@@ -121,7 +124,11 @@ export default function Dashboard() {
         updatedAt: new Date(exp.updated_at)
       }));
     },
-    enabled: !!localStorage.getItem('auth_token')
+    enabled: !!localStorage.getItem('auth_token'),
+    staleTime: 0, // Always consider data stale
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 
   // Handle time filter change
