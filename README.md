@@ -1,3 +1,7 @@
+# Background
+https://yurihe.github.io/2025/05/06/12.lovable/
+
+# How to run
 Go to src/backend
 run server
 ```
